@@ -1,41 +1,47 @@
 <script setup>
-    const calcular = () => {
-    const n1 = parseFloat(document.getElementById('n1').value);
-    const n2 = parseFloat(document.getElementById('n2').value);
-    const operacao = document.getElementById('operacao').value;
-    const res = document.getElementById('res');
+import { ref, watch} from 'vue';
 
-    let resultado;
-    switch (operacao) {
+const n1 = ref(0);
+const n2 = ref(0);
+const operacao = ref('+');
+const resultado = ref('');
+
+const calcular = () => {
+
+    let res;
+    switch (operacao.value) {
     case '+':
-        resultado = n1 + n2;
+        res = n1.value + n2.value;
         break;
     case '-': 
-        resultado = n1 - n2;
+        res = n1.value - n2.value;
         break;
     case '*': 
-        resultado = n1 * n2;
+        res = n1.value * n2.value;
         break;
     case '/': 
-        resultado = n1 / n2;
+        res =  n2.value !== 0 ? n1.value / n2.value : 'Erro: Divisão por zero';
         break;
+    default:
+        res = 'Operação inválida'
     }
-    res.innerHTML = `O número ${n1} ${operacao} ${n2} é: ${resultado}`
+    resultado.value = res;
 }
+
+watch([n1, n2, operacao], calcular)
 </script>
 
 <template>
-    <form @submit.prevent="calcular">
-        <input id="n1" class="form-control mb-3" type="number" placeholder="Digite o número">
-        <input id="n2" class="form-control mb-4" type="number" placeholder="Digite o número">
-        <select id="operacao" class="btn btn-dark ">
+    <form class="d-flex align-items-center">
+        <input v-model="n1" class="form-control mm-2" type="number" placeholder="0">
+        <select v-model="operacao" class="form-control text-center m-2">
             <option value="+">+</option>
             <option value="-">-</option>
             <option value="*">*</option>
             <option value="/">/</option>
         </select>
-        <button type="submit" class="btn btn-primary ms-5">Calcular</button>
+        <input v-model="n2" class="form-control m-2" type="number" placeholder="0">
     </form>
-
-    <p id="res" class="text-center mt-5"></p>
+    <p class="text-center fw-bold fs-2 mt-4">Resultado:</p>
+    <p class="fw-bold fs-3 text-center mt-1">{{ resultado }}</p>
 </template>
